@@ -5,6 +5,11 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.support.customtabs.CustomTabsCallback;
+import android.support.customtabs.CustomTabsClient;
+import android.support.customtabs.CustomTabsServiceConnection;
+import android.support.customtabs.CustomTabsSession;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
@@ -19,6 +24,9 @@ import com.github.mzule.androidweekly.dao.TextZoomKeeper;
 import com.github.mzule.androidweekly.entity.Article;
 import com.github.mzule.androidweekly.ui.view.ProgressView;
 import com.github.mzule.androidweekly.ui.view.TranslateView;
+import com.github.mzule.androidweekly.webview.WebViewHelper;
+import com.github.mzule.androidweekly.webview.chromium.ServiceConnection;
+import com.github.mzule.androidweekly.webview.chromium.ServiceConnectionCallback;
 import com.github.mzule.layoutannotation.Layout;
 
 import butterknife.Bind;
@@ -28,7 +36,7 @@ import butterknife.OnClick;
  * Created by CaoDongping on 3/24/16.
  */
 @Layout(R.layout.activity_article)
-public class ArticleActivity extends BaseActivity {
+public class ArticleActivity extends BaseActivity implements ServiceConnectionCallback {
 
     @Bind(R.id.webView)
     WebView webView;
@@ -87,6 +95,12 @@ public class ArticleActivity extends BaseActivity {
         drawerLayout.closeDrawers();
     }
 
+    @OnClick(R.id.customTabButton)
+    void customTab() {
+        WebViewHelper.openArticle(this,article);
+        drawerLayout.closeDrawers();
+    }
+
     @OnClick(R.id.copyUrlButton)
     void copyUrl() {
         ClipboardManager clipboard = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
@@ -114,12 +128,46 @@ public class ArticleActivity extends BaseActivity {
         settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         settings.setDomStorageEnabled(true);
         favoriteButton.setSelected(favoriteDao.contains(article));
+
+        bindCustomTabsService();
+        warmup();
+    }
+
+    private CustomTabsSession mSession;
+    private CustomTabsClient mClient;
+    private CustomTabsServiceConnection mConnection;
+
+    private void bindCustomTabsService() {
+        mConnection = new ServiceConnection(this);
+        CustomTabsClient.bindCustomTabsService(this, "com.android.chrome", mConnection);
+    }
+
+    private void warmup() {
+        if (mClient != null) mClient.warmup(0);
+    }
+
+    private void preLaunch(String url) {
+        if (mClient != null && mSession == null) {
+            mSession = mClient.newSession(new CustomTabsCallback());
+        }
+        mSession.mayLaunchUrl(Uri.parse(url), null, null);
+        //这里的第三个参数可以传入一些低优先级的Url，但不能保证会被预加载
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         TextZoomKeeper.save(settings.getTextZoom());
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mConnection != null) {
+            unbindService(mConnection);
+            mClient = null;
+            mSession = null;
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -139,5 +187,16 @@ public class ArticleActivity extends BaseActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onServiceConnected(CustomTabsClient client) {
+        mClient = client;
+        preLaunch(article.getLink());
+    }
+
+    @Override
+    public void onServiceDisconnected() {
+        mClient = null;
     }
 }

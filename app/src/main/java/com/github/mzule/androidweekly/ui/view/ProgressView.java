@@ -29,7 +29,7 @@ public class ProgressView extends ProgressWheel {
             return;
         }
         setBarColor(getResources().getColor(R.color.colorPrimary));
-        setBarWidth(DensityUtil.dp2px(2));
+        setBarWidth(DensityUtil.dp2px(4));
         spin();
     }
 

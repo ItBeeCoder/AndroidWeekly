@@ -16,7 +16,6 @@ import com.github.mzule.androidweekly.entity.Issue;
 import com.github.mzule.androidweekly.ui.adapter.ArticleAdapter;
 import com.github.mzule.androidweekly.ui.adapter.SlideAdapter;
 import com.github.mzule.androidweekly.ui.view.ProgressView;
-import com.github.mzule.androidweekly.webview.WebViewHelper;
 import com.github.mzule.layoutannotation.Layout;
 
 import java.util.List;
@@ -61,9 +60,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Object item = parent.getAdapter().getItem(position);
         if (item instanceof Article) {
-            //startActivity(ArticleActivity.makeIntent(this, (Article) item));
-            WebViewHelper.openArticle(this,(Article) item
-            );
+            startActivity(ArticleActivity.makeIntent(this, (Article) item));
         }
     }
 

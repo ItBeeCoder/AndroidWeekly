@@ -76,8 +76,8 @@
 
         <com.github.mzule.androidweekly.ui.view.ProgressView
             android:id="@+id/progressView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_centerInParent="true"/>
     </RelativeLayout>
 

@@ -11,8 +11,8 @@
 
         <com.github.mzule.androidweekly.ui.view.ProgressView
             android:id="@+id/progressView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_centerInParent="true"/>
         <ScrollView
             android:layout_width="match_parent"
@@ -96,6 +96,13 @@
             android:id="@+id/shareButton"
             style="@style/BigControl"
             app:materialIcon="share" />
+
+        <View style="@style/HorizontalLine" />
+
+        <com.github.mzule.androidweekly.ui.view.IconButton
+            android:id="@+id/customTabButton"
+            style="@style/BigControl"
+            app:materialIcon="google_chrome" />
 
         <View style="@style/HorizontalLine" />
 

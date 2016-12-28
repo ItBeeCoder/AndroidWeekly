@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:orientation="horizontal">
 
         <com.github.mzule.androidweekly.ui.view.IconButton
@@ -22,7 +22,7 @@
         <EditText
             android:id="@+id/queryInput"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/action_bar_height"
+            android:layout_height="match_parent"
             android:background="@color/transparent"
             android:hint="Search local cache here."
             android:imeOptions="actionSearch"
